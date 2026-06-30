@@ -3,6 +3,7 @@
 // ============================================================
 
 const DATA_FILES = [
+  { part: "PART 01", file: "data/part1.json" },
   { part: "PART 02", file: "data/part2.json" },
   { part: "PART 03", file: "data/part3.json" },
   { part: "PART 04", file: "data/part4.json" }
@@ -496,6 +497,27 @@ function renderDiagram(card){
       if(i < d.steps.length - 1) stepsHtml += `<div class="diag-step-arrow">→</div>`;
     });
     return `<div class="k-diagram"><div class="diag-steps">${stepsHtml}</div></div>`;
+  }
+
+  if(d.type === "org-tree" && d.levels){
+    let levelsHtml = "";
+    d.levels.forEach((level, i) => {
+      levelsHtml += `<div class="org-level${level.side ? ' org-level-side' : ''}">`;
+      level.nodes.forEach(n => {
+        levelsHtml += `<div class="org-node">${escapeHtml(n)}</div>`;
+      });
+      if(level.note){
+        levelsHtml += `<div class="org-note">${escapeHtml(level.note)}</div>`;
+      }
+      levelsHtml += `</div>`;
+      if(i < d.levels.length - 1 && !d.levels[i+1].side){
+        levelsHtml += `<div class="org-connector">│</div>`;
+      }
+    });
+    return `<div class="k-diagram">
+      ${d.title ? `<div style="text-align:center;font-size:12px;font-weight:700;margin-bottom:10px;color:var(--accent-dark);">${escapeHtml(d.title)}</div>` : ""}
+      <div class="org-tree">${levelsHtml}</div>
+    </div>`;
   }
 
   if(d.type === "facility-flow"){
